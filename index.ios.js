@@ -42,8 +42,15 @@ var Button = React.createClass({
 });
 
 class NotificationExample extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {token: null};
+  }
   componentWillMount() {
     PushNotificationIOS.addEventListener('notification', this._onNotification);
+    PushNotificationIOS.addEventListener('register', (token) => {
+      this.setState({token})
+    });
   }
 
   componentWillUnmount() {
@@ -51,17 +58,16 @@ class NotificationExample extends React.Component {
   }
 
   render() {
+    PushNotificationIOS.requestPermissions();
     return (
       <View style={styles.container}>
-      <Text style={styles.welcome}>
-      this is padding
-      this is padding
-      this is padding
-      </Text>
       <Button
       onPress={this._sendNotification}
       label="Send fake notification"
       />
+      <Text>
+      {JSON.stringify(this.state)}
+      </Text>
       </View>
     );
   }
@@ -96,8 +102,9 @@ class NotificationPermissionExample extends React.Component {
   }
 
   render() {
+    PushNotificationIOS.requestPermissions();
     return (
-      <View>
+      <View style={styles.container}>
       <Button
       onPress={this._showPermissions.bind(this)}
       label="Show enabled permissions"
@@ -116,84 +123,24 @@ class NotificationPermissionExample extends React.Component {
   }
 }
 
-var styles = StyleSheet.create({
-  button: {
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonLabel: {
-    color: 'blue',
-  },
-});
+class BadgeExample extends React.Component {
+  render() {
+    PushNotificationIOS.requestPermissions();
+    return (
+      <View style={styles.container}>
+      <Button
+      onPress={() => PushNotificationIOS.setApplicationIconBadgeNumber(42)}
+      label="Set app's icon badge to 42"
+      />
+      <Button
+      onPress={() => PushNotificationIOS.setApplicationIconBadgeNumber(0)}
+      label="Clear app's icon badge"
+      />
+      </View>
+    );
+  }
+}
 
-exports.title = 'PushNotificationIOS';
-exports.description = 'Apple PushNotification and badge value';
-exports.examples = [
-  {
-    title: 'Badge Number',
-    render(): React.Component {
-      PushNotificationIOS.requestPermissions();
-
-      return (
-        <View>
-        <Button
-        onPress={() => PushNotificationIOS.setApplicationIconBadgeNumber(42)}
-        label="Set app's icon badge to 42"
-        />
-        <Button
-        onPress={() => PushNotificationIOS.setApplicationIconBadgeNumber(0)}
-        label="Clear app's icon badge"
-        />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Push Notifications',
-    render(): React.Component {
-      return <NotificationExample />;
-    }
-  },
-  {
-    title: 'Notifications Permissions',
-    render(): React.Component {
-      return <NotificationPermissionExample />;
-    }
-  }];
-
-// /**
-//  * Sample React Native App
-//  * https://github.com/facebook/react-native
-//  */
-// 'use strict';
-//
-// var React = require('react-native');
-// var {
-//   StyleSheet,
-//   Text,
-//   View,
-// } = React;
-//
-// var awesome_project = React.createClass({
-//   render: function() {
-//     return (
-//       <View style={styles.container}>
-//         <Text style={styles.welcome}>
-//           Welcome to React Native!
-//         </Text>
-//         <Text style={styles.instructions}>
-//           To get started, edit index.ios.js
-//         </Text>
-//         <Text style={styles.instructions}>
-//           Press Cmd+R to reload,{'\n'}
-//           Cmd+D or shake for dev menu
-//         </Text>
-//       </View>
-//     );
-//   }
-// });
-//
 var styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -211,6 +158,18 @@ var styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  button: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    color: 'blue',
+  },
 });
 
-AppRegistry.registerComponent('awesome_project', () => NotificationExample);
+AppRegistry.registerComponent('awesome_project', () =>
+  NotificationExample
+  // NotificationPermissionExample
+  // BadgeExample
+);
