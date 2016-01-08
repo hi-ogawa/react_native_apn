@@ -1,0 +1,19 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    commander (4.3.5)
+      highline (~> 1.7.2)
+    highline (1.7.8)
+    houston (2.2.3)
+      commander (~> 4.1)
+      json
+    json (1.8.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  houston
+
+BUNDLED WITH
+   1.10.6
